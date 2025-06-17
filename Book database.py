@@ -8,20 +8,19 @@ def main():
 def create_table():
 
     # establish connection to database
-    conn = sqlite3.Connection('Book_database.db')
+    conn = sqlite3.Connection('book_database.db')
     cur = conn.cursor()
 
     # delete tables to start with a clean database
     cur.execute('DROP TABLE IF EXISTS Books')
     cur.execute('DROP TABLE IF EXISTS Genres')
-    cur.execute('DROP TABLE IF EXISTS Ratings')
 
     # create Books table. link to Genres table with FOREIGN KEY GenreID
     cur.execute('''CREATE TABLE Books
                 (BookID INTEGER PRIMARY KEY UNIQUE, 
                 Title TEXT,
                 GenreID INTEGER, 
-                Price TEXT,
+                Price NUMERIC (5, 2),
                 Rating INTEGER,
                 Description TEXT,
                 FOREIGN KEY(GenreID) REFERENCES Genres(GenreID))''')
@@ -31,7 +30,7 @@ def create_table():
                 (GenreID INTEGER PRIMARY KEY UNIQUE,
                 Genre_Name TEXT UNIQUE)''')
         
-    print("'Book_database.db' has been created.")
+    print("'book_database.db' has been created.")
     
     # Commit changes to database
     conn.commit()

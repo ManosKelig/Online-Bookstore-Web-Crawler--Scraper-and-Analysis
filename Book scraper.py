@@ -58,12 +58,16 @@ def main():
             if genre not in genre_list:
                 genre_list.append(genre)
                 cur.execute('''INSERT INTO Genres(Genre_Name)
-                        VALUES (?)''',
-                        (genre,))
+                        VALUES (?)''', (genre,))
+                
+            # Get genre id to be inserted into the books table
+            cur.execute('''SELECT GenreID FROM Genres WHERE Genre_Name = ?''', (genre,))
+            genre_id = cur.fetchone()[0]
 
             # Extract the book's price (first <p> tag contains price)
             p_tag = book_soup.find('p')
             price = p_tag.contents[PRICE_INDEX]
+            formatted_price = float(price.lstrip('£'))
 
             # Extract the rating from <p> tag with class "star-rating"
             p_tags = book_soup('p')
@@ -83,36 +87,32 @@ def main():
                     elif rating == 'Five':
                         rating = 5
 
-            # Extract the book description (longest <p> text is assumed to be the description)
+                # Extract the book description (longest <p> text is assumed to be the description   
                 if len(tag.text) > MIN_NUM_CHAR_DESCRIPTION:
                     description = tag.text
-                    break
 
-            # Insert the book into the Books table
-            cur.execute('''INSERT INTO Books (Title, Price, Rating, Description)
-                        VALUES (?,?,?,?)''',
-                        (title, price, rating, description))
-            book_id = cur.lastrowid  # Get the auto-generated ID of the inserted book
+            # provide a default description to prevent crash
+            if description == None or len(description) < MIN_NUM_CHAR_DESCRIPTION:
+                description = 'No description available' 
 
-            # Link the book with its genre via foreign key on Genres table
-            cur.execute('''SELECT GenreID FROM Genres WHERE Genre_Name = ?''', (genre,))
-            genre_id = cur.fetchone()
-            cur.execute('''UPDATE Books SET GenreID = ? WHERE BookID = ?
-                        ''', (genre_id[0], book_id))
+            # Insert the book into the Books table along with all scraped data
+            cur.execute('''INSERT INTO Books (Title, GenreID, Price, Rating, Description)
+                        VALUES (?,?,?,?,?)''',
+                        (title, genre_id, formatted_price, rating, description))
             
-            conn.commit()  # Commit all changes to the database
-
-            # Check if there is a "next" page and update the URL accordingly
-            next_button = soup.find('li', class_ = 'next')
-            if next_button:
-                next_page = next_button.find('a').get('href')
-                if next_page.startswith('catalogue'): # Update URL for next iteration, ensuring proper format
-                    url = domain + next_page
-                else:
-                    url = domain + 'catalogue/' + next_page
-                next_page_flag = True
+        # Check if there is a "next" page and update the URL accordingly
+        next_button = soup.find('li', class_ = 'next')
+        if next_button:
+            next_page = next_button.find('a').get('href')
+            if next_page.startswith('catalogue'): # Update URL for next iteration, ensuring proper format
+                url = domain + next_page
             else:
-                next_page_flag = False  # If there isn't a next page link, set flag to false to terminate while loop on next iteration 
+                url = domain + 'catalogue/' + next_page
+            next_page_flag = True
+        else:
+            next_page_flag = False  # If there isn't a next page link, set flag to false to terminate while loop on next iteration 
+
+    conn.commit()  # Commit all changes to the database
 
     # Close the database connection after scraping is complete
     conn.close()
