@@ -8,7 +8,9 @@ It was created upon completion of the [Python For Everybody](https://www.courser
 
 The process starts with the creation of the database where the books will be stored along with a list of genres from the website. Then the pages of the website are accessed and the relevant information about the books is scraped and organized into the database. Finally the user can perform some simple analysis operations on the data through the Command Line Interface. 
 
-This project was created with [Python3](https://www.python.org/) and [Sqlite3](https://sqlite.org/index.html)
+This project was created with [Python3](https://www.python.org/) and [Sqlite3](https://sqlite.org/index.html).
+
+It utilises the [Requests](https://docs.python-requests.org/en/master/index.html) and the [BeautifulSoup4](https://beautiful-soup-4.readthedocs.io/en/latest/) libraries as well as Regular expressions.
 
 ## Files description
 
