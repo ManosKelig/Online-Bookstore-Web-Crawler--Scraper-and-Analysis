@@ -17,17 +17,17 @@ def create_table():
 
     # create Books table. link to Genres table with FOREIGN KEY GenreID
     cur.execute('''CREATE TABLE Books
-                (BookID INTEGER PRIMARY KEY UNIQUE, 
-                Title TEXT,
+                (ID INTEGER PRIMARY KEY UNIQUE NOT NULL, 
+                Title TEXT NOT NULL,
                 GenreID INTEGER, 
                 Price NUMERIC (5, 2),
                 Rating INTEGER,
                 Description TEXT,
-                FOREIGN KEY(GenreID) REFERENCES Genres(GenreID))''')
+                FOREIGN KEY(GenreID) REFERENCES Genres(ID))''')
     
     # Create Genres table
     cur.execute('''CREATE TABLE Genres
-                (GenreID INTEGER PRIMARY KEY UNIQUE,
+                (ID INTEGER PRIMARY KEY UNIQUE,
                 Genre_Name TEXT UNIQUE)''')
         
     print("'book_database.db' has been created.")

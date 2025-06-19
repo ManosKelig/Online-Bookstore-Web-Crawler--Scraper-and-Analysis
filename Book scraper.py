@@ -61,7 +61,7 @@ def main():
                         VALUES (?)''', (genre,))
                 
             # Get genre id to be inserted into the books table
-            cur.execute('''SELECT GenreID FROM Genres WHERE Genre_Name = ?''', (genre,))
+            cur.execute('''SELECT ID FROM Genres WHERE Genre_Name = ?''', (genre,))
             genre_id = cur.fetchone()[0]
 
             # Extract the book's price (first <p> tag contains price)

@@ -55,7 +55,7 @@ def show_most_expensive():
 
     # get titles, prices and genres for top 10 most expensive books 
     cur.execute('''SELECT Title, Price, Genres.Genre_Name FROM Books
-                JOIN Genres ON Books.GenreID = Genres.GenreID 
+                JOIN Genres ON Books.GenreID = Genres.ID 
                 ORDER BY Price DESC
                 LIMIT 10''')
     
@@ -70,7 +70,7 @@ def show_cheapest():
 
     # get titles, prices and genres for top 10 cheapest books 
     cur.execute('''SELECT Title, Price, Genres.Genre_Name FROM Books
-                JOIN Genres ON Books.GenreID = Genres.GenreID 
+                JOIN Genres ON Books.GenreID = Genres.ID 
                 ORDER BY Price ASC
                 LIMIT 10''')
     
@@ -113,7 +113,7 @@ def show_number_of_books_by_genre():
     # select number of books by genre
     cur.execute('''SELECT Genre_name, COUNT(Books.GenreID)
                 FROM Genres
-                JOIN Books ON Genres.GenreID = Books.GenreID
+                JOIN Books ON Genres.ID = Books.GenreID
                 GROUP BY Genre_name
                 ORDER BY COUNT(Books.GenreID) DESC''')
     
