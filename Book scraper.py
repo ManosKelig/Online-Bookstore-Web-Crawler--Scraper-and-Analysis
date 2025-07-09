@@ -10,12 +10,12 @@ def main():
     cur = conn.cursor()
 
     # Set base domain for scraping
-    domain = 'https://books.toscrape.com/'
+    domain = 'https://books.toscrape.com/'  # base domain, individual links will be added to this
     url = domain  # Initial URL to scrape from
     next_page_flag = True  # Controls pagination: keep scraping while there's a next page
     genre_list = []  # Store genres already added to the database to avoid duplicates
 
-    GENRE_INDEX_UL= 2 # position of index for the genre in the 'ul'tag
+    GENRE_INDEX_UL= 2 # position of index for the genre in the 'ul' tag
     PRICE_INDEX = 0 # position of index for price on 'p' tag
     MIN_NUM_CHAR_DESCRIPTION = 50 # assumed minimum number of characters for a 'p' tag to contain description
 
@@ -33,7 +33,7 @@ def main():
         for tag in a_tags:
             if tag.get('title') != None:  # Only consider <a> tags with a 'title' attribute (book links) - add them to a list to be scraped for info
                 book_url = tag.get('href', None)  # Get the URL from the href attribute
-                # If URL doesn't start with 'catalogue/', prepend it
+                # If URL doesn't start with 'catalogue/', prepend it (necessary so that link can be accesed later)
                 if book_url.startswith('catalogue/') == False:
                     book_url = 'catalogue/' + book_url
                 book_url_list.append(book_url)  # Add to the list of book URLs         
@@ -65,12 +65,12 @@ def main():
             genre_id = cur.fetchone()[0]
 
             # Extract the book's price (first <p> tag contains price)
-            p_tag = book_soup.find('p')
+            p_tag = book_soup.find('p') # get only the first 'p' tag
             price = p_tag.contents[PRICE_INDEX]
             formatted_price = float(price.lstrip('£'))
 
             # Extract the rating from <p> tag with class "star-rating"
-            p_tags = book_soup('p')
+            p_tags = book_soup('p') # get all 'p' tags
             for tag in p_tags:
                 class_contents = tag.get('class')
                 if class_contents != None and class_contents[0] == 'star-rating': # position[0] is 'star-rating' and [1] the actual rating

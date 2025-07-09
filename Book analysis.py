@@ -63,6 +63,8 @@ def show_most_expensive():
     for entry in top_10:
       print(f'Title - "{entry[0]}" | Price - £{entry[1]} | Genre - {entry[2]}')
 
+    conn.close()
+
 #Show 10 cheapest books
 def show_cheapest():
     conn = sqlite3.Connection('book_database.db')
@@ -75,8 +77,11 @@ def show_cheapest():
                 LIMIT 10''')
     
     top_10 = cur.fetchall()
+
     for entry in top_10:
       print(f'Title - "{entry[0]}" | Price - £{entry[1]} | Genre - {entry[2]}')
+
+    conn.close()
 
 #Search books by keyword in description
 def search_by_keyword():
@@ -98,12 +103,14 @@ def search_by_keyword():
     #   iterate over query results to print titles and sentences which contain user input
     for result in description_query_results:
         title = result[0]    #   get title
-        pattern = rf'[A-Z][^.!?]*?{keyword}[^.!?]*[.!?]'
+        pattern = f'[A-Z][^.!?]*?{keyword}[^.!?]*[.!?]'
         quoted_sentence = re.search(pattern, result[1], re.IGNORECASE)  #   use regular expression to isolate the sentence that contains user input, make it case insensitive
         if quoted_sentence != None: #   check if re expression result is empty, otherwise print results
             print(f'"{title}"')
             print(f'"{quoted_sentence.group()}"')
             print()
+
+        conn.close()
 
 def show_number_of_books_by_genre():
 
@@ -126,6 +133,8 @@ def show_number_of_books_by_genre():
         if genre != 'Default' and genre != 'Add a comment': # exclude 'Default' and 'Add a comment' entries
             print(genre, number_of_books)
 
+    conn.close()
+
 def show_number_of_books_by_rating():
 
     conn = sqlite3.Connection('book_database.db')
@@ -144,6 +153,8 @@ def show_number_of_books_by_rating():
         rating = result[0]
         number_of_books = result[1]
         print(f'{rating} stars: {number_of_books}')
+
+    conn.close()
 
 # Ensure that code is run only when run directly
 if __name__ == '__main__':
